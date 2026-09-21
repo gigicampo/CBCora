@@ -179,3 +179,9 @@ dialog{border:0;padding:0;background:transparent;max-width:560px;width:calc(100%
 #age[readonly]{background:#f8f2f3;color:#65585b;cursor:not-allowed}
 @media(max-width:760px){.home-trend-controls{display:grid;grid-template-columns:1fr}.home-trend-controls label,.custom-date-range label{min-width:0}.custom-date-range{display:grid;grid-template-columns:1fr 1fr}}
 @media(max-width:430px){.custom-date-range{grid-template-columns:1fr}.trend-outlier-note{font-size:12px}}
+
+/* Mobile upload chooser: keep gallery/files separate from direct camera capture. */
+.mobile-upload-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.upload-zone #fileInput,.upload-zone #cameraInput{display:none}
+.mobile-upload-actions .btn{display:flex;align-items:center;justify-content:center;text-align:center}
+@media(max-width:560px){.mobile-upload-actions{grid-template-columns:1fr}}

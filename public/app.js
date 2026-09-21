@@ -400,9 +400,13 @@ function renderHome(){
 function renderScan(){
   app.innerHTML=`<p class="eyebrow">Add CBC Result</p><h1>Scan or upload your report</h1><p class="muted">Review every detected value before saving. Lab formats vary, so automatic extraction should never bypass your confirmation.</p>
   <section class="upload-zone">
-    <div class="upload-icon">📄</div><h2>Choose a CBC report</h2><p class="muted">Photo, image, or PDF</p>
-    <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" capture="environment" />
-    <label for="fileInput" class="btn primary">Choose File / Camera</label>
+    <div class="upload-icon">📄</div><h2>Choose a CBC report</h2><p class="muted">Select an existing photo/PDF, or take a new photo.</p>
+    <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" />
+    <input id="cameraInput" type="file" accept="image/*" capture="environment" />
+    <div class="mobile-upload-actions">
+      <label for="fileInput" class="btn primary">🖼️ Choose Photo / PDF</label>
+      <label for="cameraInput" class="btn secondary">📷 Take Photo</label>
+    </div>
     <p id="fileName" class="muted" style="margin-top:12px"></p>
   </section>
   <div class="choice-grid">
@@ -410,10 +414,15 @@ function renderScan(){
     <button class="choice" id="manualBtn"><strong>Enter Manually</strong><small>Type values exactly as printed on your lab report.</small></button>
   </div>
   <div class="notice"><strong>Important:</strong> CBCora compares values with the reference ranges entered from the report. A result outside that range does not by itself identify a medical condition.</div>`;
-  document.getElementById('fileInput').addEventListener('change',e=>{
-    const f=e.target.files[0];if(!f)return;state.uploadedFile=f;document.getElementById('fileName').textContent=`Selected: ${f.name}`;
+  const handleLegacyCBCFile=(file)=>{
+    if(!file)return;
+    state.uploadedFile=file;
+    const fileName=document.getElementById('fileName');
+    if(fileName) fileName.textContent=`Selected: ${file.name || 'Camera photo'}`;
     setTimeout(()=>{state.draft=JSON.parse(JSON.stringify(sample));navigate('review')},250);
-  });
+  };
+  document.getElementById('fileInput').addEventListener('change',e=>handleLegacyCBCFile(e.target.files?.[0]));
+  document.getElementById('cameraInput').addEventListener('change',e=>handleLegacyCBCFile(e.target.files?.[0]));
   document.getElementById('sampleBtn').addEventListener('click',()=>{state.draft=JSON.parse(JSON.stringify(sample));navigate('review')});
   document.getElementById('manualBtn').addEventListener('click',()=>{state.draft=[{code:'HGB',value:'',low:'',high:'',unit:'g/L'}];navigate('review')});
 }
@@ -653,18 +662,27 @@ function simulateOCRExtraction(){
 function renderScan(){
   app.innerHTML=`<p class="eyebrow">Add CBC Result</p><h1>Scan or upload your report</h1><p class="muted">CBCora uses a review-first OCR workflow: upload, extract, check confidence, correct anything uncertain, then save.</p>
   <section class="upload-zone">
-    <div class="upload-icon">📄</div><h2>Choose a CBC report</h2><p class="muted">Photo, image, or PDF</p>
-    <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" capture="environment" />
-    <label for="fileInput" class="btn primary">Choose File / Camera</label>
+    <div class="upload-icon">📄</div><h2>Choose a CBC report</h2><p class="muted">Select an existing photo/PDF, or take a new photo.</p>
+    <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" />
+    <input id="cameraInput" type="file" accept="image/*" capture="environment" />
+    <div class="mobile-upload-actions">
+      <label for="fileInput" class="btn primary">🖼️ Choose Photo / PDF</label>
+      <label for="cameraInput" class="btn secondary">📷 Take Photo</label>
+    </div>
     <p id="fileName" class="muted" style="margin-top:12px"></p>
   </section>
   <section class="card ocr-ready-card"><h2>OCR-ready workflow</h2><div class="ocr-steps"><span>1 Upload</span><span>2 Extract</span><span>3 Confidence check</span><span>4 Review</span><span>5 Save</span></div><p class="muted">The prototype includes a provider-ready extraction layer. A production OCR engine can later be connected without changing the review and validation screens.</p></section>
   <div class="choice-grid"><button class="choice" id="sampleBtn"><strong>Try OCR Demo</strong><small>Simulates extraction and confidence scores.</small></button><button class="choice" id="manualBtn"><strong>Enter Manually</strong><small>Type values exactly as printed on your report.</small></button></div>
   <div class="notice"><strong>Important:</strong> OCR should never save values automatically. CBCora requires user review because lab layouts, units, and reference ranges vary.</div>`;
-  document.getElementById('fileInput').addEventListener('change',e=>{
-    const f=e.target.files[0];if(!f)return;
-    state.uploadedFile=f;document.getElementById('fileName').textContent=`Selected: ${f.name}`;navigate('ocr');
-  });
+  const handleCBCFile=(file)=>{
+    if(!file)return;
+    state.uploadedFile=file;
+    const fileName=document.getElementById('fileName');
+    if(fileName) fileName.textContent=`Selected: ${file.name || 'Camera photo'}`;
+    navigate('ocr');
+  };
+  document.getElementById('fileInput').addEventListener('change',e=>handleCBCFile(e.target.files?.[0]));
+  document.getElementById('cameraInput').addEventListener('change',e=>handleCBCFile(e.target.files?.[0]));
   document.getElementById('sampleBtn').addEventListener('click',()=>{state.uploadedFile={name:'sample-cbc-report.pdf',type:'application/pdf'};navigate('ocr')});
   document.getElementById('manualBtn').addEventListener('click',()=>{state.draft=[{code:'HGB',value:'',low:'',high:'',unit:'g/L',confidence:1,source:'manual'}];navigate('review')});
 }
