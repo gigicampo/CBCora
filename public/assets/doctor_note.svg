@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220">
+  <rect width="320" height="220" rx="28" fill="#fbfafc"/>
+  <rect x="64" y="30" width="190" height="150" rx="18" fill="#fff" stroke="#ddd5e7" stroke-width="4"/>
+  <rect x="128" y="18" width="62" height="26" rx="10" fill="#8d1f2d"/>
+  <path d="M94 78h130M94 102h106M94 126h118" stroke="#d7ccd8" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="106" cy="150" r="10" fill="#d56a74"/>
+  <path d="m104 150 5 5 10-11" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="20" y="34" font-family="Arial, sans-serif" font-size="20" fill="#6d3b4f" font-weight="700">Doctor questions</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220">
+  <rect width="320" height="220" rx="28" fill="#fbf9f8"/>
+  <circle cx="160" cy="110" r="68" fill="#fff" stroke="#e5d1d1" stroke-width="4"/>
+  <path d="M122 118h72" stroke="#6c6464" stroke-width="12" stroke-linecap="round"/>
+  <path d="M183 118h18" stroke="#d69b63" stroke-width="12" stroke-linecap="round"/>
+  <path d="M215 92c8 7 8 21 0 28" fill="none" stroke="#cfc8c8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M229 84c12 12 12 31 0 43" fill="none" stroke="#e0dada" stroke-width="5" stroke-linecap="round"/>
+  <path d="M110 60l100 100" stroke="#c43d4f" stroke-width="12" stroke-linecap="round"/>
+  <text x="20" y="34" font-family="Arial, sans-serif" font-size="20" fill="#6c3f47" font-weight="700">Avoid smoking</text>
+</svg>

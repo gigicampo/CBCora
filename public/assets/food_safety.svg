@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220">
+  <rect width="320" height="220" rx="28" fill="#fbfcf7"/>
+  <rect x="44" y="56" width="232" height="118" rx="16" fill="#fff" stroke="#dce7cd" stroke-width="4"/>
+  <path d="M88 95l26 26 38-42" fill="none" stroke="#72a450" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(166 78)">
+    <circle cx="24" cy="24" r="24" fill="#ffe49b"/>
+    <path d="M24 4v40M4 24h40" stroke="#fff7dc" stroke-width="5"/>
+  </g>
+  <path d="M215 112c8-12 25-10 31 0" stroke="#6c8767" stroke-width="8" stroke-linecap="round"/>
+  <text x="20" y="34" font-family="Arial, sans-serif" font-size="20" fill="#5b7347" font-weight="700">Food safety</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220">
+  <rect width="320" height="220" rx="28" fill="#f7fcff"/>
+  <ellipse cx="160" cy="184" rx="70" ry="12" fill="#d8e6f3"/>
+  <rect x="116" y="60" width="88" height="108" rx="12" fill="#ffffff" stroke="#c5d9e6" stroke-width="4"/>
+  <path d="M124 105h72v52a10 10 0 0 1-10 10h-52a10 10 0 0 1-10-10Z" fill="#97d4ef"/>
+  <path d="M133 50h54" stroke="#c5d9e6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M160 38c10 12 19 24 19 38a19 19 0 0 1-38 0c0-14 9-26 19-38Z" fill="#4eb8e4" opacity=".9"/>
+  <text x="20" y="34" font-family="Arial, sans-serif" font-size="20" fill="#285a73" font-weight="700">Hydration support</text>
+</svg>
