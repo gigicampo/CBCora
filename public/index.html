@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#8D1F2D" />
+  <meta name="description" content="CBCora helps you scan, understand, track, and discuss CBC laboratory results." />
+  <title>CBCora — Your CBC, made clearer.</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-nav="home" aria-label="Go to home">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="icon.svg" alt="" />
+        </span>
+        <span><strong>CBCora</strong><small>Your CBC, made clearer.</small></span>
+      </button>
+      <button class="icon-btn" id="helpBtn" aria-label="Help and safety information">?</button>
+    </header>
 
+    <main id="app" tabindex="-1"></main>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button data-nav="home" class="nav-item active"><span>⌂</span><small>Home</small></button>
+      <button data-nav="results" class="nav-item"><span>▤</span><small>Results</small></button>
+      <button data-nav="scan" class="nav-item scan-nav"><span>＋</span><small>Scan</small></button>
+      <button data-nav="trends" class="nav-item"><span>↗</span><small>Trends</small></button>
+      <button data-nav="profile" class="nav-item"><span>◉</span><small>Profile</small></button>
+    </nav>
+  </div>
+
+  <dialog id="infoDialog">
+    <div class="dialog-card">
+      <button class="dialog-close" aria-label="Close">×</button>
+      <h2>CBCora is an educational companion</h2>
+      <p>CBCora helps organize CBC values, compare them with the reference ranges printed on your report, and track changes over time. It does not diagnose medical conditions or replace a healthcare professional.</p>
+      <p>If you feel severely unwell or have urgent symptoms, seek medical care rather than relying on an app result.</p>
+      <button class="btn primary dialog-close-action">Got it</button>
+    </div>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

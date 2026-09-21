@@ -1,0 +1,17 @@
+{
+  "name": "CBCora",
+  "short_name": "CBCora",
+  "description": "Scan, understand, track, and discuss CBC laboratory results.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8F8",
+  "theme_color": "#8D1F2D",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
