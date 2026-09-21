@@ -58,6 +58,9 @@ const state = {
   },
   splashShown:false,
   guideAutoChecked:false,
+  homeTrendMode:'3',
+  homeTrendStart:'',
+  homeTrendEnd:'',
 };
 
 const app = document.getElementById('app');
@@ -250,6 +253,27 @@ function latestResultsSlice(n=5){
   return state.results.slice(0,n);
 }
 
+function savedDateOptions(selected=''){
+  return state.results.map(r=>`<option value="${r.date}" ${r.date===selected?'selected':''}>${formatDate(r.date)}</option>`).join('');
+}
+
+function homeTrendResults(){
+  const sorted=state.results.slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(state.homeTrendMode==='all') return sorted.slice().reverse();
+  if(state.homeTrendMode==='custom'){
+    const start=state.homeTrendStart || sorted[sorted.length-1]?.date || '';
+    const end=state.homeTrendEnd || sorted[0]?.date || '';
+    const lo=new Date(start+'T00:00:00').getTime();
+    const hi=new Date(end+'T00:00:00').getTime();
+    return sorted.filter(r=>{
+      const t=new Date(r.date+'T00:00:00').getTime();
+      return t>=Math.min(lo,hi)&&t<=Math.max(lo,hi);
+    }).slice().reverse();
+  }
+  const n=Number(state.homeTrendMode)||3;
+  return sorted.slice(0,n).reverse();
+}
+
 function normalizedRangePosition(r){
   const low=Number(r.low), high=Number(r.high), value=Number(r.value);
   const span=Math.max(0.000001,high-low);
@@ -258,17 +282,19 @@ function normalizedRangePosition(r){
 }
 
 function combinedCBCTrendChart(){
-  const recent=latestResultsSlice(5).slice().reverse();
+  const recent=homeTrendResults();
   if(!recent.length) return '<p class="muted">No CBC trend data yet.</p>';
   const codes=Object.keys(CBC_META).filter(code=>recent.some(rec=>rec.values.some(v=>v.code===code)));
-  const palette=['#8D1F2D','#B53D4D','#D56A74','#A75261','#7B3140','#C8848D','#9E5E68','#6F1622','#D99099','#A92F40','#C76370','#7D4550','#B97882','#934858','#C44D5D'];
-  const w=920,h=330,padL=48,padR=22,padT=34,padB=50;
+  // Distinct, high-contrast palette to help older users differentiate overlapping series.
+  const palette=['#8D1F2D','#1565C0','#2E7D32','#6A1B9A','#EF6C00','#00838F','#C62828','#5D4037','#283593','#558B2F','#AD1457','#00695C','#4527A0','#9E9D24','#37474F'];
+  const w=920,h=350,padL=48,padR=22,padT=34,padB=64;
   const plotW=w-padL-padR,plotH=h-padT-padB;
   const xAt=i=>padL+i*(plotW/Math.max(1,recent.length-1));
   const yAt=score=>padT+(100-score)/100*plotH;
   const yLow=yAt(25), yHigh=yAt(75), yMid=yAt(50);
-  const dateLabels=recent.map((r,i)=>`<text class="combined-axis-label" x="${xAt(i)}" y="${h-15}" text-anchor="middle">${new Date(r.date+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'})}</text>`).join('');
+  const dateLabels=recent.map((r,i)=>`<text class="combined-axis-label" x="${xAt(i)}" y="${h-28}" text-anchor="middle">${new Date(r.date+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'})}</text>`).join('');
   const verticalGrid=recent.map((r,i)=>`<line x1="${xAt(i)}" y1="${padT}" x2="${xAt(i)}" y2="${h-padB}" class="soft-grid-line"/>`).join('');
+  let outsideCount=0;
   const series=codes.map((code,idx)=>{
     const color=palette[idx%palette.length];
     const pts=recent.map((rec,i)=>{
@@ -281,25 +307,25 @@ function combinedCBCTrendChart(){
     const area=`${pts[0].x},${h-padB} ${poly} ${pts[pts.length-1].x},${h-padB}`;
     const points=pts.map(p=>{
       const outside=statusOf(p.r)!=='ok';
+      if(outside) outsideCount++;
       const title=`${code}: ${p.r.value} ${p.r.unit} on ${formatDate(p.date)} — ${statusText(statusOf(p.r)).replace(/[↓↑✓]\s*/,'')}`;
       return outside
-        ? `<g class="outlier-point"><circle cx="${p.x}" cy="${p.y}" r="8.5" fill="#FFF7F8" stroke="#8D1F2D" stroke-width="3.5"><title>${escapeHtml(title)}</title></circle><circle cx="${p.x}" cy="${p.y}" r="3.8" fill="${color}"><title>${escapeHtml(title)}</title></circle></g>`
-        : `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#fff" stroke="${color}" stroke-width="2.8"><title>${escapeHtml(title)}</title></circle>`;
+        ? `<g class="outlier-point"><circle cx="${p.x}" cy="${p.y}" r="9" fill="#FFFFFF" stroke="#8D1F2D" stroke-width="4"><title>${escapeHtml(title)}</title></circle><circle cx="${p.x}" cy="${p.y}" r="4.2" fill="${color}" stroke="#FFFFFF" stroke-width="1.3"><title>${escapeHtml(title)}</title></circle><text x="${p.x}" y="${p.y-13}" text-anchor="middle" class="outlier-bang">!</text></g>`
+        : `<circle cx="${p.x}" cy="${p.y}" r="4.5" fill="#fff" stroke="${color}" stroke-width="3"><title>${escapeHtml(title)}</title></circle>`;
     }).join('');
-    return `<polygon points="${area}" fill="${color}" opacity=".075"/><polyline points="${poly}" fill="none" stroke="${color}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" opacity=".96"/>${points}`;
+    return `<polygon points="${area}" fill="${color}" opacity=".035"/><polyline points="${poly}" fill="none" stroke="${color}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity=".98"/>${points}`;
   }).join('');
   const legend=codes.map((code,idx)=>{
     const color=palette[idx%palette.length];
     return `<button class="aesthetic-legend-item" data-metric="${code}" title="Open ${escapeHtml(CBC_META[code].name)}"><span class="legend-dot" style="--legend-color:${color}"></span><span>${code}</span></button>`;
   }).join('');
+  const rangeControls=`<div class="home-trend-controls"><label><span>Trend range</span><select id="homeTrendMode"><option value="3" ${state.homeTrendMode==='3'?'selected':''}>Latest 3 results</option><option value="5" ${state.homeTrendMode==='5'?'selected':''}>Latest 5 results</option><option value="all" ${state.homeTrendMode==='all'?'selected':''}>All saved results</option><option value="custom" ${state.homeTrendMode==='custom'?'selected':''}>Choose dates</option></select></label>${state.homeTrendMode==='custom'?`<div class="custom-date-range"><label><span>From</span><select id="homeTrendStart">${savedDateOptions(state.homeTrendStart)}</select></label><label><span>To</span><select id="homeTrendEnd">${savedDateOptions(state.homeTrendEnd)}</select></label></div>`:''}</div>`;
   return `<div class="combined-chart-wrap aesthetic-chart-card">
-    <div class="combined-chart-header"><div><span class="chart-kicker">CBC OVERVIEW</span><p>Each area is normalized to its own lab range so all CBC measures can share one view.</p></div><button class="text-btn" data-nav="trends">See details</button></div>
+    <div class="combined-chart-header"><div><span class="chart-kicker">CBC OVERVIEW</span><p>Each line is normalized to its own lab range so different CBC measures can be compared clearly.</p></div><button class="text-btn" data-nav="trends">See details</button></div>
+    ${rangeControls}
     <div class="chart-key"><span><i class="key-band"></i>Reference range</span><span><i class="key-alert"></i>Outside range</span></div>
-    <div class="combined-svg-scroll"><svg class="combined-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Combined CBC trends for the last five tests">
-      <defs>
-        <linearGradient id="cbcRangeGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF1F3"/><stop offset="100%" stop-color="#FFF9FA"/></linearGradient>
-        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#8D1F2D" flood-opacity="0.10"/></filter>
-      </defs>
+    <div class="combined-svg-scroll"><svg class="combined-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Combined CBC trends">
+      <defs><linearGradient id="cbcRangeGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF1F3"/><stop offset="100%" stop-color="#FFF9FA"/></linearGradient></defs>
       <rect x="${padL}" y="${yHigh}" width="${plotW}" height="${yLow-yHigh}" rx="18" fill="url(#cbcRangeGlow)"/>
       ${verticalGrid}
       <line x1="${padL}" y1="${yHigh}" x2="${w-padR}" y2="${yHigh}" class="range-line"/>
@@ -311,6 +337,7 @@ function combinedCBCTrendChart(){
       ${dateLabels}${series}
     </svg></div>
     <div class="aesthetic-legend">${legend}</div>
+    <p class="trend-outlier-note"><strong>Note:</strong> A maroon ring with <b>!</b> marks a result outside that test's uploaded laboratory reference range. ${outsideCount?`${outsideCount} out-of-range point${outsideCount===1?'':'s'} ${outsideCount===1?'is':'are'} visible in this selected period.`:'No out-of-range points are visible in this selected period.'}</p>
   </div>`;
 }
 function renderHome(){
@@ -357,10 +384,16 @@ function renderHome(){
         <div class="feature-icon">📚</div>
         <div><h3>Guidance now included</h3><p class="muted">Open each CBC result to see quick food and lifestyle preview cards, then view the full guidance page with realistic illustrations.</p></div>
       </section>
-      <section class="card soft privacy"><span>🔒</span><div><strong>Privacy first</strong><p class="muted">This prototype keeps its demo data in your browser session. Production builds can support local-only storage and explicit cloud backup.</p></div></section>
+      <section class="card soft disclaimer-card"><span>ⓘ</span><div><strong>Disclaimer</strong><p class="muted">CBCora provides educational information to help you understand and organize CBC results. It does not diagnose medical conditions, prescribe treatment, or replace advice from a qualified healthcare professional. Always discuss abnormal results, symptoms, medicines, supplements, pregnancy, or treatment decisions with your clinician.</p></div></section>
     </div>`;
   const guideBtn=document.getElementById('openUserGuideBtn');
   if(guideBtn) guideBtn.addEventListener('click',()=>openUserGuide());
+  const trendMode=document.getElementById('homeTrendMode');
+  if(trendMode) trendMode.addEventListener('change',e=>{state.homeTrendMode=e.target.value;if(e.target.value==='custom'){const sorted=state.results.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));state.homeTrendStart=state.homeTrendStart||sorted[0]?.date||'';state.homeTrendEnd=state.homeTrendEnd||sorted[sorted.length-1]?.date||'';}renderHome();});
+  const trendStart=document.getElementById('homeTrendStart');
+  const trendEnd=document.getElementById('homeTrendEnd');
+  if(trendStart) trendStart.addEventListener('change',e=>{state.homeTrendStart=e.target.value;renderHome();});
+  if(trendEnd) trendEnd.addEventListener('change',e=>{state.homeTrendEnd=e.target.value;renderHome();});
   maybeShowFirstUseGuide();
 }
 
@@ -537,7 +570,19 @@ function drawTrend(){
   document.getElementById('trendArea').innerHTML=`<section class="chart-wrap"><svg class="chart" viewBox="0 0 ${w} ${h}" aria-label="${code} trend chart"><line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}"/><polyline points="${poly}"/>${xy.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5"/><text x="${p.x}" y="${h-10}" text-anchor="middle">${new Date(p.date+'T00:00:00').toLocaleDateString(undefined,{month:'short',year:'2-digit'})}</text><text x="${p.x}" y="${p.y-12}" text-anchor="middle">${p.r.value}</text>`).join('')}</svg></section><section class="card" style="margin-top:14px"><h2>${code} history</h2>${pts.slice().reverse().map(p=>`<div class="status-row"><span>${formatDate(p.date)}</span><strong>${p.r.value} ${unit}</strong></div>`).join('')}</section>`;
 }
 
+function ageFromDOB(dob){
+  if(!dob) return '';
+  const birth=new Date(dob+'T00:00:00');
+  if(Number.isNaN(birth.getTime())) return '';
+  const today=new Date();
+  let age=today.getFullYear()-birth.getFullYear();
+  const m=today.getMonth()-birth.getMonth();
+  if(m<0 || (m===0 && today.getDate()<birth.getDate())) age--;
+  return age>=0?String(age):'';
+}
+
 function renderProfile(){
+  state.profile.age=ageFromDOB(state.profile.dob)||state.profile.age;
   app.innerHTML=`<p class="eyebrow">Profile & Settings</p><h1>Your CBCora</h1>
   <section class="card profile-card-main">
     <div class="profile-header-edit">
@@ -552,7 +597,7 @@ function renderProfile(){
       <div class="field"><label for="displayName">Display name</label><input id="displayName" value="${escapeHtml(state.profile.name)}"></div>
       <div class="field"><label for="fullName">Full name</label><input id="fullName" value="${escapeHtml(state.profile.fullName)}"></div>
       <div class="field"><label for="dob">Date of birth</label><input id="dob" type="date" value="${escapeHtml(state.profile.dob)}"></div>
-      <div class="field"><label for="age">Age</label><input id="age" inputmode="numeric" value="${escapeHtml(state.profile.age)}"></div>
+      <div class="field"><label for="age">Age</label><input id="age" inputmode="numeric" value="${escapeHtml(state.profile.age)}" readonly aria-readonly="true"><small class="field-help">Calculated automatically from date of birth.</small></div>
       <div class="field"><label for="sex">Sex</label><select id="sex"><option ${state.profile.sex==='Female'?'selected':''}>Female</option><option ${state.profile.sex==='Male'?'selected':''}>Male</option><option ${state.profile.sex==='Prefer not to say'?'selected':''}>Prefer not to say</option></select></div>
       <div class="field"><label for="bloodType">Blood type</label><input id="bloodType" value="${escapeHtml(state.profile.bloodType)}"></div>
       <div class="field"><label for="email">Email</label><input id="email" type="email" value="${escapeHtml(state.profile.email)}"></div>
@@ -570,7 +615,7 @@ function renderProfile(){
     state.profile.name=document.getElementById('displayName').value.trim()||'Friend';
     state.profile.fullName=document.getElementById('fullName').value.trim();
     state.profile.dob=document.getElementById('dob').value;
-    state.profile.age=document.getElementById('age').value.trim();
+    state.profile.age=ageFromDOB(document.getElementById('dob').value);
     state.profile.sex=document.getElementById('sex').value;
     state.profile.bloodType=document.getElementById('bloodType').value.trim();
     state.profile.email=document.getElementById('email').value.trim();
@@ -578,6 +623,8 @@ function renderProfile(){
     state.profile.city=document.getElementById('city').value.trim();
     renderProfile();
   });
+  const dobInput=document.getElementById('dob');
+  if(dobInput){dobInput.addEventListener('change',()=>{const age=ageFromDOB(dobInput.value);document.getElementById('age').value=age;state.profile.age=age;state.profile.dob=dobInput.value;});}
   document.getElementById('profilePhotoInput').addEventListener('change',e=>{
     const file=e.target.files[0];
     if(!file) return;

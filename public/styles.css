@@ -159,3 +159,23 @@ dialog{border:0;padding:0;background:transparent;max-width:560px;width:calc(100%
 .user-guide-home-btn{margin-top:10px;border-color:#DDAEB6;background:#fff;color:var(--primary)}
 .user-guide-home-btn:hover{background:#FFF3F5}
 @media(max-width:520px){.guide-dialog-card{padding:20px 16px}.guide-header{align-items:flex-start}.guide-logo{width:54px;height:54px}.guide-step{grid-template-columns:36px 1fr;padding:12px}.guide-number{width:32px;height:32px;border-radius:10px}.guide-step p{font-size:14px}}
+
+/* v1.1 accessibility and trend controls */
+.home-trend-controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 12px;padding:10px 12px;border-radius:16px;background:#fff9fa;border:1px solid var(--line)}
+.home-trend-controls label{display:grid;gap:5px;min-width:180px}
+.home-trend-controls label>span{font-size:12px;font-weight:800;color:var(--primary);letter-spacing:.02em}
+.home-trend-controls select{min-height:42px;border:1px solid #d9b7bd;border-radius:12px;background:#fff;padding:8px 10px;color:var(--text);font-weight:700}
+.custom-date-range{display:flex;flex-wrap:wrap;gap:10px;flex:1}
+.custom-date-range label{min-width:190px;flex:1}
+.trend-outlier-note{margin:12px 2px 0;padding:10px 12px;border-radius:14px;background:#fff5f6;border:1px solid #edcdd2;color:#6f2632;font-size:13px;line-height:1.45}
+.outlier-bang{font-size:12px;font-weight:900;fill:#8D1F2D;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.aesthetic-legend-item{font-size:13px;font-weight:800}
+.legend-dot{width:13px;height:13px;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 0 1px rgba(47,29,32,.18)}
+.disclaimer-card{display:flex;gap:12px;align-items:flex-start;background:#fff4f5;box-shadow:none}
+.disclaimer-card>span{font-size:25px;color:var(--primary);font-weight:900;line-height:1}
+.disclaimer-card strong{color:var(--primary)}
+.disclaimer-card p{margin-bottom:0}
+.field-help{display:block;color:var(--muted);font-size:12px;margin-top:-2px}
+#age[readonly]{background:#f8f2f3;color:#65585b;cursor:not-allowed}
+@media(max-width:760px){.home-trend-controls{display:grid;grid-template-columns:1fr}.home-trend-controls label,.custom-date-range label{min-width:0}.custom-date-range{display:grid;grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.custom-date-range{grid-template-columns:1fr}.trend-outlier-note{font-size:12px}}
