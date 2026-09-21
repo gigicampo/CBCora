@@ -24,7 +24,7 @@ The `wrangler.toml` file tells Cloudflare to upload everything inside `public/` 
 ## Important after redeploying
 The service-worker cache name is now `cbcora-v09`. This forces browsers that used the previous build to refresh to the updated asset map.
 
-## v1.1 updates
+## v1.2 updates
 - Profile age is calculated automatically from Date of Birth.
 - Home privacy card replaced with a medical Disclaimer card.
 - Home CBC overview defaults to the latest 3 saved tests.
