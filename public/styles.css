@@ -140,3 +140,22 @@ dialog{border:0;padding:0;background:transparent;max-width:560px;width:calc(100%
 .outlier-point{filter:url(#softShadow)}
 @media(max-width:760px){.home-gear-btn{top:14px;right:14px}.hero-profile{padding-right:50px}.aesthetic-chart-card{padding:14px}.aesthetic-chart-card .combined-chart-header{align-items:flex-start}.aesthetic-chart-card .combined-chart-header .chart-kicker{font-size:13px}.aesthetic-legend{gap:6px}.aesthetic-legend-item{padding:6px 9px}}
 @media(max-width:430px){.home-gear-btn{width:42px;height:42px;border-radius:14px;font-size:20px}.hero-profile{padding-right:44px}.aesthetic-chart-card .combined-chart-header{display:block}.aesthetic-chart-card .combined-chart-header .text-btn{padding-left:0}.aesthetic-chart-card{padding:12px}.aesthetic-legend-item{font-size:11px}}
+
+/* v1.0 first-use User Guide */
+.guide-dialog{max-width:720px;width:calc(100% - 24px);max-height:92vh}
+.guide-dialog-card{max-height:88vh;overflow:auto;padding:26px}
+.guide-header{display:flex;gap:14px;align-items:center;padding-right:44px;margin-bottom:18px}
+.guide-logo{width:64px;height:64px;border-radius:18px;flex:0 0 auto}
+.guide-header h2{margin-bottom:4px}
+.guide-header p{margin-bottom:0}
+.guide-close{position:absolute;right:14px;top:12px;width:40px;height:40px;border:0;border-radius:50%;background:#F7EFF0;color:var(--primary);font-size:25px;display:grid;place-items:center}
+.guide-steps{display:grid;gap:10px}
+.guide-step{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;padding:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#fff9fa)}
+.guide-number{width:36px;height:36px;border-radius:12px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:900}
+.guide-step h3{margin:1px 0 4px;font-size:17px;color:var(--primary)}
+.guide-step p{margin:0;color:var(--muted);font-size:15px}
+.guide-safety{margin:14px 0;padding:13px 14px;border-radius:14px;background:#FFF8E8;border:1px solid #ECDCA7;color:#6E5521;font-size:14px}
+.guide-finish{width:100%}
+.user-guide-home-btn{margin-top:10px;border-color:#DDAEB6;background:#fff;color:var(--primary)}
+.user-guide-home-btn:hover{background:#FFF3F5}
+@media(max-width:520px){.guide-dialog-card{padding:20px 16px}.guide-header{align-items:flex-start}.guide-logo{width:54px;height:54px}.guide-step{grid-template-columns:36px 1fr;padding:12px}.guide-number{width:32px;height:32px;border-radius:10px}.guide-step p{font-size:14px}}

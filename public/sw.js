@@ -1,4 +1,4 @@
-const CACHE='cbcora-v09';
+const CACHE='cbcora-v10';
 const CORE=[
   '/',
   '/index.html',

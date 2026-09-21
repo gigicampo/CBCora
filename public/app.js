@@ -57,15 +57,35 @@ const state = {
     localOnly:true
   },
   splashShown:false,
+  guideAutoChecked:false,
 };
 
 const app = document.getElementById('app');
 const infoDialog = document.getElementById('infoDialog');
+const guideDialog = document.getElementById('guideDialog');
 const topbar = document.querySelector('.topbar');
 const bottomNav = document.querySelector('.bottom-nav');
 
 document.getElementById('helpBtn').addEventListener('click',()=>infoDialog.showModal());
 document.querySelectorAll('.dialog-close,.dialog-close-action').forEach(b=>b.addEventListener('click',()=>infoDialog.close()));
+
+function guideStorageKey(){
+  const installed=(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  return installed?'cbcora_user_guide_seen_installed_v1':'cbcora_user_guide_seen_browser_v1';
+}
+function markGuideSeen(){try{localStorage.setItem(guideStorageKey(),'1')}catch(e){}}
+function hasSeenGuide(){try{return localStorage.getItem(guideStorageKey())==='1'}catch(e){return false}}
+function openUserGuide({firstUse=false}={}){
+  if(!guideDialog) return;
+  if(firstUse) markGuideSeen();
+  if(!guideDialog.open) guideDialog.showModal();
+}
+function maybeShowFirstUseGuide(){
+  if(state.guideAutoChecked) return;
+  state.guideAutoChecked=true;
+  if(!hasSeenGuide()) setTimeout(()=>openUserGuide({firstUse:true}),350);
+}
+document.querySelectorAll('.guide-close,.guide-finish').forEach(b=>b.addEventListener('click',()=>{markGuideSeen();guideDialog.close()}));
 
 document.addEventListener('click',e=>{
   const nav=e.target.closest('[data-nav]');
@@ -309,6 +329,7 @@ function renderHome(){
       ${combinedCBCTrendChart()}
       <div class="hero-actions single-action">
         <button class="btn primary scan-primary" data-nav="scan">📷 Scan a CBC Result</button>
+        <button class="btn ghost user-guide-home-btn" id="openUserGuideBtn">📖 User Guide</button>
       </div>
     </section>
     <div class="dashboard-grid">
@@ -338,6 +359,9 @@ function renderHome(){
       </section>
       <section class="card soft privacy"><span>🔒</span><div><strong>Privacy first</strong><p class="muted">This prototype keeps its demo data in your browser session. Production builds can support local-only storage and explicit cloud backup.</p></div></section>
     </div>`;
+  const guideBtn=document.getElementById('openUserGuideBtn');
+  if(guideBtn) guideBtn.addEventListener('click',()=>openUserGuide());
+  maybeShowFirstUseGuide();
 }
 
 function renderScan(){
